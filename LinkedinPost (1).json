@@ -1,0 +1,792 @@
+{
+  "name": "LinkedinPost",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "Linkedin Post"
+            },
+            {
+              "name": "Titel"
+            },
+            {
+              "name": "Bild_ID"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        20,
+        80
+      ],
+      "id": "9f30345a-f6a4-48eb-87ad-5e40669ad148",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "person": "Zco19taeC_",
+        "text": "={{ $json['Linkedin Post'] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        800,
+        180
+      ],
+      "id": "b26db754-25b9-4212-b29b-2000ef18bc4f",
+      "name": "Ohne Bild posten",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "WxJ7S9pJRCkn1iM8",
+          "name": "test.crystalflow"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "Zco19taeC_",
+        "text": "={{ $('When Executed by Another Workflow').item.json['Linkedin Post'] }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        900,
+        -80
+      ],
+      "id": "045da0da-f2f1-40bc-8dce-ab210e03649e",
+      "name": "Mit Bild posten",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "WxJ7S9pJRCkn1iM8",
+          "name": "Max Muster"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b891d04-ca2c-49a3-96a1-becd26c918d1",
+              "leftValue": "={{ $json.Bild_ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        80
+      ],
+      "id": "b9452df8-9cbf-46ce-88ab-b9c571358e6b",
+      "name": "Bild vorhanden?"
+    },
+    {
+      "parameters": {
+        "person": "Zco19taeC_",
+        "text": "={{ $json['Linkedin Post'] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        740
+      ],
+      "id": "e665a223-3e92-4b31-9139-c29926497d78",
+      "name": "Ohne Bild posten1",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "WxJ7S9pJRCkn1iM8",
+          "name": "test.crystalflow"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "Zco19taeC_",
+        "text": "={{ $('Bild vorhanden?1').item.json['Linkedin Post'] }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        480
+      ],
+      "id": "32cb0b65-17c9-403e-8cb8-6fea4f8fa7cd",
+      "name": "Mit Bild posten1",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "WxJ7S9pJRCkn1iM8",
+          "name": "test.crystalflow"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b891d04-ca2c-49a3-96a1-becd26c918d1",
+              "leftValue": "={{ $json.Bild_ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        660
+      ],
+      "id": "1c568db3-20f7-4b7b-b9e2-f2ef2972e32c",
+      "name": "Bild vorhanden?1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        20,
+        660
+      ],
+      "id": "1e097595-8ec5-459f-bf4f-3180ce806bfd",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appFn2u2yMznKKH78",
+          "mode": "list",
+          "cachedResultName": "Medizin",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsJcfUxE9w5xd6O",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78/tblsJcfUxE9w5xd6O"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Linkedin Post": "={{ $('When Executed by Another Workflow').item.json['Linkedin Post'] }}",
+            "Status": "Erledigt"
+          },
+          "matchingColumns": [
+            "Linkedin Post"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Titel",
+              "displayName": "Titel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Artikel roh",
+              "displayName": "Artikel roh",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Zusammenfassung",
+              "displayName": "Zusammenfassung",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Linkedin Post",
+              "displayName": "Linkedin Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bild",
+              "displayName": "Bild",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Bild_ID",
+              "displayName": "Bild_ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Entwurf",
+                  "value": "Entwurf"
+                },
+                {
+                  "name": "Erledigt",
+                  "value": "Erledigt"
+                },
+                {
+                  "name": "erledigt",
+                  "value": "erledigt"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1220,
+        80
+      ],
+      "id": "608bccd2-a90c-4457-bf75-89ffee5c65dd",
+      "name": "Status erledigt setzen",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "NcDRRJZvW2SPvSgM",
+          "name": "Medizin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appFn2u2yMznKKH78",
+          "mode": "list",
+          "cachedResultName": "Medizin",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsJcfUxE9w5xd6O",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78/tblsJcfUxE9w5xd6O"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Linkedin Post": "=",
+            "Status": "Erledigt",
+            "id": "={{ $('Bild vorhanden?1').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Titel",
+              "displayName": "Titel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Artikel roh",
+              "displayName": "Artikel roh",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Zusammenfassung",
+              "displayName": "Zusammenfassung",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Linkedin Post",
+              "displayName": "Linkedin Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bild",
+              "displayName": "Bild",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Entwurf",
+                  "value": "Entwurf"
+                },
+                {
+                  "name": "Erledigt",
+                  "value": "Erledigt"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1660,
+        640
+      ],
+      "id": "bfe7f25e-f6fd-4504-9bce-4cbc4a6de648",
+      "name": "Status erledigt setzen1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "NcDRRJZvW2SPvSgM",
+          "name": "Medizin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appFn2u2yMznKKH78",
+          "mode": "list",
+          "cachedResultName": "Medizin",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsJcfUxE9w5xd6O",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78/tblsJcfUxE9w5xd6O"
+        },
+        "filterByFormula": "=({Status}='Entwurf')",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        260,
+        660
+      ],
+      "id": "fe2e4080-4e78-4ba6-a6f2-54825642cc06",
+      "name": "Entwurf Zeilen auslesen",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "NcDRRJZvW2SPvSgM",
+          "name": "Medizin"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        540,
+        660
+      ],
+      "id": "b37e2d67-bcf8-4fe9-af7c-3e023cd7d0d5",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "content": "## Manuelles Posten von Linkedin Beiträgen über den Agenten",
+        "height": 540,
+        "width": 1480,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -160
+      ],
+      "id": "0a5a8ff7-b987-4513-836a-8128775f4d4d",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Automatisches Posten von Linkedin Beiträgen, jeden Tag um 8 Uhr morgens.",
+        "height": 540,
+        "width": 1920,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        420
+      ],
+      "id": "337326bc-b5aa-466b-b527-4248113873d0",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.Bild_ID }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        680,
+        -80
+      ],
+      "id": "6c806194-273f-4fd6-8439-6d03828331a4",
+      "name": "Bilddownload",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "03aIdKsDkEbP7Lr8",
+          "name": "Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.Bild_ID }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1140,
+        480
+      ],
+      "id": "5ffaadb6-c081-472c-8d2c-834b4f748845",
+      "name": "Bilddownload1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "03aIdKsDkEbP7Lr8",
+          "name": "Account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "Linkedin Post": "🌍💊 Eine spannende Studie von Bet et al. (2013) beleuchtet die Langzeitwirkungen von Antidepressiva in einer natürlichen Umgebung. Hier sind einige zentrale Erkenntnisse:\n\n🔹 64 % der Patienten berichteten im Durchschnitt von 2,9 Nebenwirkungen.\n🔹 Schwere Depressionen, mehrere psychiatrische Diagnosen und höhere Dosierungen korrelieren mit mehr Nebenwirkungen.\n🔹 Trizyklische Antidepressiva verursachen signifikant mehr anticholinerge Nebenwirkungen (z.B. Mundtrockenheit) im Vergleich zu SSRIs.\n🔹 Venlafaxin kann vermehrtes Schwitzen auslösen, während Mirtazapin mit Gewichtszunahme und weniger sexuellen Funktionsstörungen assoziiert ist.\n\n🌟 Überraschenderweise zeigen die Ergebnisse, dass Nebenwirkungen auch bei langfristiger Einnahme bestehen bleiben. \n\nDiese Informationen sind entscheidend für die laufende Bewertung von Behandlungsstrategien! \n\nReferenz: Bet PM, Hugtenburg JG, Penninx BWJH, Hoogendijk WJ. Eur Neuropsychopharmacol. 2013;23(12):1443-1451.",
+          "Titel": "Nebenwirkungen von Antidepressiva bei Langzeiteinnahme in einem naturalistischen Umfeld",
+          "Bild_ID": "1OOvCUemimn7w1ps6uB5ShOPmFifhO_Ct"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Bild vorhanden?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ohne Bild posten": {
+      "main": [
+        [
+          {
+            "node": "Status erledigt setzen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mit Bild posten": {
+      "main": [
+        [
+          {
+            "node": "Status erledigt setzen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild vorhanden?": {
+      "main": [
+        [
+          {
+            "node": "Bilddownload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ohne Bild posten",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ohne Bild posten1": {
+      "main": [
+        [
+          {
+            "node": "Status erledigt setzen1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mit Bild posten1": {
+      "main": [
+        [
+          {
+            "node": "Status erledigt setzen1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild vorhanden?1": {
+      "main": [
+        [
+          {
+            "node": "Bilddownload1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ohne Bild posten1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Entwurf Zeilen auslesen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entwurf Zeilen auslesen": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Bild vorhanden?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bilddownload": {
+      "main": [
+        [
+          {
+            "node": "Mit Bild posten",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bilddownload1": {
+      "main": [
+        [
+          {
+            "node": "Mit Bild posten1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f9f7d173-6c1f-41b9-8388-001d9fcbb7bf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b0155eb7741c71e121e8ae6624cbe1c1b88d8af67303265d5c74110aa9dee75a"
+  },
+  "id": "bxBiHu9w4enDw8Nn",
+  "tags": [
+    {
+      "createdAt": "2025-02-16T09:28:45.180Z",
+      "updatedAt": "2025-02-16T09:28:45.180Z",
+      "id": "9N4pMhakmxidbLXj",
+      "name": "tutorial"
+    }
+  ]
+}

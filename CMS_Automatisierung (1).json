@@ -1,0 +1,1681 @@
+{
+  "name": "CMS-Automatisierung",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "contextWindowLength": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1340,
+        540
+      ],
+      "id": "3f962a30-10a4-411a-8bf8-88c05ef35829",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.text}}",
+        "options": {
+          "systemMessage": "=Du bist ein hilfsbereiter, freundlicher und zuverlässiger Assistent im Dienste von Julian. Du unterstützt ihn bei der Verwaltung und Pflege seiner Content-Datenbank und bist spezialisiert auf das professionelle Verfassen und Strukturieren von Artikeln.\n\nDu hast Zugriff auf eine Airtable-Datenbank. Jede Zeile dieser Tabelle entspricht einem einzelnen Artikel. Die Spalten der Tabelle lauten:\n- Titel\n- Artikel roh\n- Zusammenfassung\n- LinkedIn Post\n- Bild\n- Bild_ID\n- Status\n\n# Deine Aufgaben:\n1. Du verwaltest die Datenbank mithilfe deiner Tools.\n2. Du kannst selbstständig neue Artikel in die Airtable-Datenbank einpflegen. Julian wird dir entweder:\n  a) einen fertigen Artikeltext zur Verfügung stellen, den du strukturiert in die entsprechenden Felder der Datenbank einträgst, oder\n  b) ein Thema nennen, zu dem du eigenständig einen Artikel verfasst und anschließend in Airtable erfasst.\n\n# Tools\n- getRecordID: Mit diesem Tool liest du alle Werte der primären Spalte aus (Titel) und die einzelnen IDs der Zeilen.\n\n- getSpecificRecord: Nutze dieses Tool, um die Werte einer bestimmten Zeile auszugeben. Du musst vorher das Tool \"getRecordID\" ausführen, um die ID der entsprechenden Zeile zu bekommen.\n\n- updateRecord: Nutze dieses Tool, um Werte in einer Zeile zu aktualisieren. Du musst vorher das Tool \"getRecordID\" ausführen, um die ID der entsprechenden Zeile zu bekommen.\n\n- postOnLinkedin: Nutze dieses Tool, um einen Linkedin Beitrag zu posten. Dabei brauchst du die Informationen aus der Spalte \"Titel\",  \"Linkedin Post\" und \"Bild_ID\" des enstprechenden Records in Airtable. Du musst vorher das Tool \"getRecordID\" ausführen, um die ID der entsprechenden Zeile zu bekommen. Falls keine Bild_ID vorhanden ist, lässt du diesen Wert leer.\n\n# Hinweise: \n1. Wenn du einen Linkedin Beitrag posten sollst, musst du im Airtable nach der entsprechenden Zeile schauen, da sich dort die Informationen in der Spalte \"Linkedin Post\" und \"Bild_ID\" befinden. Nutze dafür das Tool \"getRecordID\" ausführen, um die ID der entsprechenden Zeile zu bekommen.\n\n2. Wenn du Linkedin Beiträge selbst schreiben sollst, folgst du folgenden Prinzipien:\n- Ziel ist es die Leser aufzuklären und ihnen Wissen weiterzugeben.\n- Nutze gerne Emojies und einen professionellen aber ansprechenden Schreibstil. \n- Übertreibe nicht und achte einfach darauf, nützliches Wissen weiterzugeben.\n- Achte drauf die Beiträge professionell zu formatieren im Plain Text Format.\n\n3. Du darfst nur auf Linkedin posten, wenn Julian dir das ausdrücklich gesagt hat. Frage lieber nochmal nach, wenn du dir nicht sicher bist."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1360,
+        340
+      ],
+      "id": "3da49f50-749e-4d99-87cf-881cd7ba1e66",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1480,
+        540
+      ],
+      "id": "b99facb8-e420-43a5-b3c0-b2541156ece0",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "iH63rZMtYd6PMJir",
+          "name": "Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appFn2u2yMznKKH78",
+          "mode": "list",
+          "cachedResultName": "Medizin",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsJcfUxE9w5xd6O",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78/tblsJcfUxE9w5xd6O"
+        },
+        "options": {
+          "fields": [
+            "Titel"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -1220,
+        660
+      ],
+      "id": "e0b50783-600e-4fc8-aab5-142d211f36af",
+      "name": "getRecords",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "NcDRRJZvW2SPvSgM",
+          "name": "Medizin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger1').item.json.message.document.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2100,
+        1040
+      ],
+      "id": "19c310a8-d068-4c98-8681-b47c324ff6bd",
+      "name": "Download PDF",
+      "webhookId": "42884c8c-bccc-490f-9f21-2a8b42460dae",
+      "credentials": {
+        "telegramApi": {
+          "id": "4uzPdTseZqs18NFk",
+          "name": "TEST BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -1880,
+        1040
+      ],
+      "id": "28317991-c2e6-46a6-bd08-f7d113b5e4ac",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appFn2u2yMznKKH78",
+          "mode": "list",
+          "cachedResultName": "Medizin",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsJcfUxE9w5xd6O",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78/tblsJcfUxE9w5xd6O"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Entwurf",
+            "Bild": "={{ $json.webViewLink }}",
+            "Linkedin Post": "={{ $('Linkedin Beitrag erstellen').item.json.response.text }}",
+            "Zusammenfassung": "={{ $('Artikel zusammenfassen').item.json.response.text }}",
+            "Artikel roh": "={{ $('Extract from File').item.json.text }}",
+            "Titel": "={{ $('Titel auf Deutsch übersetzen').item.json.response.text }}",
+            "Bild_ID": "={{ $json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Titel",
+              "displayName": "Titel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Artikel roh",
+              "displayName": "Artikel roh",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Zusammenfassung",
+              "displayName": "Zusammenfassung",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Linkedin Post",
+              "displayName": "Linkedin Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bild",
+              "displayName": "Bild",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bild_ID",
+              "displayName": "Bild_ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Entwurf",
+                  "value": "Entwurf"
+                },
+                {
+                  "name": "Erledigt",
+                  "value": "Erledigt"
+                },
+                {
+                  "name": "erledigt",
+                  "value": "erledigt"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        1020
+      ],
+      "id": "6ccc0528-5ed2-45a8-8f3e-b0bd459aff04",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "NcDRRJZvW2SPvSgM",
+          "name": "Medizin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1940,
+        100
+      ],
+      "id": "38f4c123-4206-4df7-922c-d96658ddccd0",
+      "name": "Audio Download",
+      "webhookId": "265f08cd-0978-464c-84f1-5cfc8dea8e9d",
+      "credentials": {
+        "telegramApi": {
+          "id": "4uzPdTseZqs18NFk",
+          "name": "TEST BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -100,
+        60
+      ],
+      "id": "7a32ca5e-d8fe-4701-bd7c-c25d60662446",
+      "name": "Audio senden",
+      "webhookId": "1c5fb2ae-45c1-420c-b42a-dff93965f185",
+      "credentials": {
+        "telegramApi": {
+          "id": "4uzPdTseZqs18NFk",
+          "name": "TEST BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1720,
+        100
+      ],
+      "id": "d3e656a2-ae69-40b6-8733-7502b124a6bc",
+      "name": "Transkribieren",
+      "credentials": {
+        "openAiApi": {
+          "id": "iH63rZMtYd6PMJir",
+          "name": "Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "={{ $('AI Agent').item.json.output }}",
+        "voice": "nova",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -320,
+        60
+      ],
+      "id": "3a90f205-76f4-4a31-ad00-74441840a5c3",
+      "name": "Audio generieren",
+      "credentials": {
+        "openAiApi": {
+          "id": "iH63rZMtYd6PMJir",
+          "name": "Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3af8999f-0611-4e73-a7b1-fc4943a05d24",
+              "name": "text",
+              "value": "={{ $('Telegram Trigger1').item.json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1860,
+        340
+      ],
+      "id": "49791e32-adf9-42ff-974a-44750049a66a",
+      "name": "Text standardisieren"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2600,
+        340
+      ],
+      "id": "7124362f-ddcb-41ae-8522-5d47db1797da",
+      "name": "Telegram Trigger1",
+      "webhookId": "d6bcd912-9e7e-4ff2-829a-4e25d6889892",
+      "credentials": {
+        "telegramApi": {
+          "id": "4uzPdTseZqs18NFk",
+          "name": "TEST BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "05fd9490-c1ba-4827-b2ce-2588fb8efe23"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3388ce7f-5682-4851-8fce-65cd19c74ab1",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9f564aea-56e8-499d-99c4-24a747845092",
+                    "leftValue": "={{ $json.message.document.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2380,
+        340
+      ],
+      "id": "87b2a241-fe30-481b-9db5-3a324fd9f889",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appFn2u2yMznKKH78",
+          "mode": "list",
+          "cachedResultName": "Medizin",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsJcfUxE9w5xd6O",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78/tblsJcfUxE9w5xd6O"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('id__using_to_match_', `Die ID der Zeile.`, 'string') }}",
+            "Titel": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Titel', `Der Titel der Zeile.`, 'string') }}",
+            "Artikel roh": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Artikel_roh', `Der rohe Artikel.`, 'string') }}",
+            "Zusammenfassung": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Zusammenfassung', `Die Zusammenfassung des Artikels.`, 'string') }}",
+            "Linkedin Post": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Linkedin_Post', `Der Linkedin Beitrag über den Aritkel.`, 'string') }}",
+            "Status": "={{ $fromAI('Status', `Auf Erledigt oder Entwurf setzen`, 'string') }}",
+            "Bild": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Bild', `Die URL zum Bild (optional, falls angeben, ansonsten leer lassen).`, 'string') }}",
+            "Bild_ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Bild_ID', `Die Bild ID (optional, falls angeben, ansonsten leer lassen).`, 'string') }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Titel",
+              "displayName": "Titel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Artikel roh",
+              "displayName": "Artikel roh",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Zusammenfassung",
+              "displayName": "Zusammenfassung",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Linkedin Post",
+              "displayName": "Linkedin Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bild",
+              "displayName": "Bild",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bild_ID",
+              "displayName": "Bild_ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Entwurf",
+                  "value": "Entwurf"
+                },
+                {
+                  "name": "Erledigt",
+                  "value": "Erledigt"
+                },
+                {
+                  "name": "erledigt",
+                  "value": "erledigt"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -800,
+        660
+      ],
+      "id": "1cec6e2e-09de-4e1b-95d3-9e98f0df8a2f",
+      "name": "updateRecord",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "NcDRRJZvW2SPvSgM",
+          "name": "Medizin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appFn2u2yMznKKH78",
+          "mode": "list",
+          "cachedResultName": "Medizin",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsJcfUxE9w5xd6O",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78/tblsJcfUxE9w5xd6O"
+        },
+        "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Record_ID', `Die ID des Records.`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -1080,
+        660
+      ],
+      "id": "8f58f6c5-7915-48f6-b2d7-62c6ab238024",
+      "name": "getSpecificRecord",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "NcDRRJZvW2SPvSgM",
+          "name": "Medizin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "postOnLinkedin",
+        "description": "Nutze dieses Tool, um nach der Bestätigung von Julian einen Linkedin Beitrag zu posten.",
+        "workflowId": {
+          "__rl": true,
+          "value": "bxBiHu9w4enDw8Nn",
+          "mode": "list",
+          "cachedResultName": "LinkedinPost"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Titel": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Titel', `Der Titel aus der Airtable Zeile.`, 'string') }}",
+            "Linkedin Post": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Linkedin_Post', `Der Linkedin Post aus der Airtable Zeile.`, 'string') }}",
+            "Bild_ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Bild_ID', `Die Bild_ID aus der Airtable Zeile.`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Linkedin Post",
+              "displayName": "Linkedin Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Titel",
+              "displayName": "Titel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Bild_ID",
+              "displayName": "Bild_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        -660,
+        660
+      ],
+      "id": "03ab41ab-3e20-4ee5-84aa-822b5be09dad",
+      "name": "postOnLinkedin"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appFn2u2yMznKKH78",
+          "mode": "list",
+          "cachedResultName": "Medizin",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblsJcfUxE9w5xd6O",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appFn2u2yMznKKH78/tblsJcfUxE9w5xd6O"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Artikel roh": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Artikel_roh', `Der rohe Artikel.`, 'string') }}",
+            "Zusammenfassung": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Zusammenfassung', `Die Zusammenfassung des Artikels.`, 'string') }}",
+            "Linkedin Post": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Linkedin_Post', `Der Linkedin Beiträg über den Artikel.`, 'string') }}",
+            "Status": "Entwurf",
+            "Titel": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Titel', `Der Titel des Artikels.`, 'string') }}",
+            "Bild": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Bild', `Die URL zum Bild (optional, falls angeben, ansonsten leer lassen).`, 'string') }}",
+            "Bild_ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Bild_ID', `Die Bild ID (optional, falls angeben, ansonsten leer lassen).`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Titel",
+              "displayName": "Titel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Artikel roh",
+              "displayName": "Artikel roh",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Zusammenfassung",
+              "displayName": "Zusammenfassung",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Linkedin Post",
+              "displayName": "Linkedin Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bild",
+              "displayName": "Bild",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bild_ID",
+              "displayName": "Bild_ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Entwurf",
+                  "value": "Entwurf"
+                },
+                {
+                  "name": "Erledigt",
+                  "value": "Erledigt"
+                },
+                {
+                  "name": "erledigt",
+                  "value": "erledigt"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -940,
+        660
+      ],
+      "id": "86511427-6a24-44b0-a5f3-db4749420a99",
+      "name": "createRecord",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "NcDRRJZvW2SPvSgM",
+          "name": "Medizin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1260,
+        1280
+      ],
+      "id": "4a8a3962-acc0-4723-91f7-e0f63e0e45d6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "iH63rZMtYd6PMJir",
+          "name": "Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Identifiziere den Titel des folgenden Artikels und übersetze diesen auf Deutsch. Falls es sich schon um einen deutschen Titel handelt, übernimmst du einfach den deutschen Titel. Antworte auschließlich mit dem Titel des Aritkels auf Deutsch.\n\nDas ist der Text: \n{{ $json.text }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -1620,
+        1040
+      ],
+      "id": "1975402d-813b-472b-a265-e6f23ed17ccd",
+      "name": "Titel auf Deutsch übersetzen"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id}}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        1040
+      ],
+      "id": "d89b7361-23c4-43a3-9c74-1d845da92fe5",
+      "name": "Bild im Chat anzeigen",
+      "webhookId": "bd218344-77b9-4108-bc04-b263d55d3c72",
+      "credentials": {
+        "telegramApi": {
+          "id": "4uzPdTseZqs18NFk",
+          "name": "TEST BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id}}",
+        "message": "Passt dieses Bild für den Beitrag?",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        120,
+        1040
+      ],
+      "id": "f94c07a6-5944-4162-a95e-5ca5bd9da481",
+      "name": "Feedback",
+      "webhookId": "c1f85f26-0b19-4764-aa8d-bb7cd024046a",
+      "credentials": {
+        "telegramApi": {
+          "id": "4uzPdTseZqs18NFk",
+          "name": "TEST BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a959211f-006c-43ec-b541-4b63cb88b870",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        340,
+        1040
+      ],
+      "id": "6a0e9231-f871-4299-a3c8-b1a0cd1f4dd9",
+      "name": "Bild akzeptiert?"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "=Erstelle ein hochwertiges, visuell ansprechendes Thumbnail-Bild für einen Artikel mit dem Thema: {{ $('Titel auf Deutsch übersetzen').item.json.response.text }}\n\nAchte darauf, dass das Bild textfrei bleibt, um die Aussagekraft des visuellen Eindrucks zu betonen.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -360,
+        1040
+      ],
+      "id": "2fdd13ed-4a02-4312-b65b-ab677c7888d3",
+      "name": "Beitragsbild generieren",
+      "credentials": {
+        "openAiApi": {
+          "id": "iH63rZMtYd6PMJir",
+          "name": "Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.from.id }}",
+        "text": "=Ich habe den Artikel verarbeitet und einen neuen Eintrag in Airtable erstellt.\n\nHier die wesentlichen Infos:\n\n# Titel: {{ $json.fields.Titel }}\n\n# Zusammenfassung des Papers: \n{{ $json.fields.Zusammenfassung }}\n\n# Linkedin Beitrag:\n{{ $json.fields['Linkedin Post'] }}\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        1020
+      ],
+      "id": "c4d8c019-84cd-4494-8de3-b6dfbe07428f",
+      "name": "Nachricht an Telegram",
+      "webhookId": "9ba66d7d-8e22-43c8-a78f-1ccac432bcf5",
+      "credentials": {
+        "telegramApi": {
+          "id": "4uzPdTseZqs18NFk",
+          "name": "TEST BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        360
+      ],
+      "id": "cf615766-892e-43bd-97d6-c02729a70749",
+      "name": "Telegram",
+      "webhookId": "366cabb3-fe24-46d7-9d24-a3fee58fc315",
+      "credentials": {
+        "telegramApi": {
+          "id": "4uzPdTseZqs18NFk",
+          "name": "TEST BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Bild im Chat anzeigen').item.json.result.document.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        760,
+        1020
+      ],
+      "id": "42034e79-1b24-41f5-a949-b0771094f864",
+      "name": "Bild herunterladen",
+      "webhookId": "f9f5787c-6a18-40fb-b73d-b575949f90e3",
+      "credentials": {
+        "telegramApi": {
+          "id": "4uzPdTseZqs18NFk",
+          "name": "TEST BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Du erhälst die Zusammenfassung eines wissenschaftliches Papers und sollst einen Linkedin Post darauf erstellen, der die wesentlichen Punkte des Papers nennt. Ziel ist es die Leser aufzuklären und ihnen Wissen weiterzugeben. Nutze gerne Emojies und einen professionellen aber ansprechenden Schreibstil. Übertreibe nicht und achte einfach darauf, nützliches Wissen weiterzugeben. Erwähne auch immer die Quelle zum Paper. Der Post sollte nicht zu lang sein. Max. 150 Wörter. Erstelle den Post im Plain Text Format ohne Markdown Elemente.\n\nDas ist die Zusammenfassung:\n{{ $json.response.text }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -940,
+        1040
+      ],
+      "id": "40377792-e254-4bf2-a36b-aa97a3d4f754",
+      "name": "Linkedin Beitrag erstellen"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Du bist ein Experte im akademischen Schreiben. Du erhälst den Textinhalt eines wissenschaftlichen Artikels und sollst diesen auf Deutsch zusammenfassen. Am Ende der Zusammenfassung fügst du außerdem den Artikel als Quelle an im AMA Format.\n\nDas ist der Aritkel:\n{{ $('Extract from File').item.json.text }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -1280,
+        1040
+      ],
+      "id": "b5475351-c220-498e-9453-d821f6589170",
+      "name": "Artikel zusammenfassen"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8f9c39b4-2078-4d4a-b953-44d106a8ca28",
+              "leftValue": "={{ $('Transkribieren').item.json.text }}",
+              "rightValue": "Memo",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -580,
+        200
+      ],
+      "id": "63006115-b238-4f5f-a7f7-c9c5d000078b",
+      "name": "Wenn Triggerwort vorhanden"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9fbb1bac-e576-4534-b33a-8c7f0d9a4846",
+              "leftValue": "={{ $('Telegram Trigger1').item.json.message.voice.file_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -860,
+        340
+      ],
+      "id": "f4fa430f-8530-4185-8adf-76cd2cab50f7",
+      "name": "Wenn Audio vorhanden"
+    },
+    {
+      "parameters": {
+        "content": "## Den Artikel verarbeiten. Dabei nutzen wir für jede Aufgabe ein unterschiedliches Sprachmodell-Modul.",
+        "height": 540,
+        "width": 1120,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1700,
+        880
+      ],
+      "id": "f67cebe7-3e45-44ac-bbaa-10dde2a67095",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Passendes Bild generieren und Human in the Loop Feedback",
+        "height": 540,
+        "width": 1120,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        880
+      ],
+      "id": "2355d50e-22a7-4039-a6d0-49a7ed606349",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Bild bei Google Drive hochladen, Share-URL erstellen und alle Informationen zum Artikel in Airtable hochladen",
+        "height": 540,
+        "width": 1000,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        660,
+        880
+      ],
+      "id": "5097a802-82b2-4ddf-98ca-c238750e231f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# Agent, welcher die Airtable Datenbank verwaltet und manuell Linkedin Posts erstellen kann",
+        "height": 940,
+        "width": 2160
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        -100
+      ],
+      "id": "886e76a6-5bff-4633-8843-c15ddd58262b",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Titel auf Deutsch übersetzen').item.json.response.text }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1NJmfEHxwYT0zsDGN6l1AR5k2pEYUR76i",
+          "mode": "list",
+          "cachedResultName": "Bilder für Linkedin",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1NJmfEHxwYT0zsDGN6l1AR5k2pEYUR76i"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        960,
+        1020
+      ],
+      "id": "faf719ec-cc74-4023-af3a-dd908cffe67f",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "03aIdKsDkEbP7Lr8",
+          "name": "Account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Wenn Audio vorhanden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getRecords": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download PDF": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Titel auf Deutsch übersetzen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Nachricht an Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio Download": {
+      "main": [
+        [
+          {
+            "node": "Transkribieren",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transkribieren": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio generieren": {
+      "main": [
+        [
+          {
+            "node": "Audio senden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text standardisieren": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Audio Download",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text standardisieren",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "updateRecord": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getSpecificRecord": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "postOnLinkedin": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createRecord": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Artikel zusammenfassen",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Linkedin Beitrag erstellen",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Titel auf Deutsch übersetzen",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Titel auf Deutsch übersetzen": {
+      "main": [
+        [
+          {
+            "node": "Artikel zusammenfassen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild im Chat anzeigen": {
+      "main": [
+        [
+          {
+            "node": "Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback": {
+      "main": [
+        [
+          {
+            "node": "Bild akzeptiert?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild akzeptiert?": {
+      "main": [
+        [
+          {
+            "node": "Bild herunterladen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Beitragsbild generieren",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Beitragsbild generieren": {
+      "main": [
+        [
+          {
+            "node": "Bild im Chat anzeigen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild herunterladen": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Linkedin Beitrag erstellen": {
+      "main": [
+        [
+          {
+            "node": "Beitragsbild generieren",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Artikel zusammenfassen": {
+      "main": [
+        [
+          {
+            "node": "Linkedin Beitrag erstellen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wenn Triggerwort vorhanden": {
+      "main": [
+        [
+          {
+            "node": "Audio generieren",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wenn Audio vorhanden": {
+      "main": [
+        [
+          {
+            "node": "Wenn Triggerwort vorhanden",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c1e78d81-e69d-4f23-9409-1511ca8fb307",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b0155eb7741c71e121e8ae6624cbe1c1b88d8af67303265d5c74110aa9dee75a"
+  },
+  "id": "iQw3AX4ZWc6ogETG",
+  "tags": [
+    {
+      "createdAt": "2025-02-16T09:28:45.180Z",
+      "updatedAt": "2025-02-16T09:28:45.180Z",
+      "id": "9N4pMhakmxidbLXj",
+      "name": "tutorial"
+    }
+  ]
+}
